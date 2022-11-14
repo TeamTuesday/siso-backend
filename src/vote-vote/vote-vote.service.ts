@@ -11,12 +11,12 @@ export class VoteVoteService {
   ) {}
 
   async vote(
-    voteId: string,
+    subjectId: string,
     type: string,
     userId: string,
   ): Promise<VoteVote | undefined> {
     const vote = await this.voteVoteRepository.save({
-      voteId,
+      subjectId,
       type,
       userId,
     });

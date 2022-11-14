@@ -3,7 +3,6 @@ import {
   ConflictException,
   Controller,
   NotFoundException,
-  Param,
   Post,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -22,12 +21,25 @@ export class VoteVoteController {
   @ApiOperation({
     summary: '투표 하기',
     description: '특정 ID에 대한 투표 주제에 투표한다.',
+    requestBody: {
+      description: '투표하기 데이터',
+      content: {
+        'application/json': {
+          schema: {
+            properties: {
+              subjectId: { type: 'string' },
+              type: { type: 'string' },
+            },
+          },
+        },
+      },
+    },
   })
   async voteById(
     @Body('subjectId') subjectId: string,
     @Body('type') type: 'AGREE' | 'OPPOSITE',
   ) {
-    const userId = 'TEST_02'; // TODO: 임시 userId 사용
+    const userId = 'TEST_02'; // FIXME: 임시 userId 사용
 
     const voteSubject = await this.VoteSubjectsService.findById(subjectId);
     if (!voteSubject) {
