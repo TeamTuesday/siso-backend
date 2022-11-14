@@ -9,24 +9,24 @@ import {
 
 @Entity()
 export class VoteVote {
-  @PrimaryGeneratedColumn()
-  id!: number;
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
 
-  @Column({ nullable: false })
-  voteId!: string;
+  @Column({ name: 'subject_id', nullable: false })
+  subjectId!: string;
 
   @Column({ nullable: false })
   type!: string;
 
-  @Column({ nullable: false })
+  @Column({ name: 'user_id', nullable: false })
   userId!: string;
 
-  @CreateDateColumn({ nullable: false })
-  created!: Date;
+  @CreateDateColumn({ name: 'created_at', nullable: false })
+  createdAt!: Date;
 
-  @UpdateDateColumn({ nullable: true, default: null })
-  updated?: Date;
+  @UpdateDateColumn({ name: 'updated_at', nullable: false })
+  updatedAt!: Date;
 
-  @DeleteDateColumn({ nullable: true, default: null })
-  deleted?: Date;
+  @DeleteDateColumn({ name: 'deleted_at', nullable: true, default: null })
+  deletedAt?: Date;
 }
