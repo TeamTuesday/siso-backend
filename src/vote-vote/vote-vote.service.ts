@@ -8,9 +8,7 @@ export class VoteVoteService {
   constructor(
     @InjectRepository(VoteVote)
     private voteVoteRepository: Repository<VoteVote>,
-  ) {
-    this.voteVoteRepository = voteVoteRepository;
-  }
+  ) {}
 
   async vote(
     voteId: string,
@@ -25,9 +23,8 @@ export class VoteVoteService {
     return vote;
   }
 
-  async findById(id: string, userId: string) {
-    return (
-      (await this.voteVoteRepository.findOne({ voteId: id, userId })) ?? null
-    );
+  async findById(subjectId: string, userId: string) {
+    const vote = await this.voteVoteRepository.findOne({ subjectId, userId });
+    return vote ?? null;
   }
 }
