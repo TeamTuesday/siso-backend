@@ -2,12 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { VoteVote } from './entities/vote-vote.entity';
 import { Repository } from 'typeorm';
+import { VoteSubject } from '../vote-subjects/entities/vote-subject.entity';
 
 @Injectable()
 export class VoteVoteService {
   constructor(
     @InjectRepository(VoteVote)
     private voteVoteRepository: Repository<VoteVote>,
+    @InjectRepository(VoteSubject)
+    private voteSubjectRepository: Repository<VoteSubject>,
   ) {}
 
   async vote(
@@ -20,6 +23,11 @@ export class VoteVoteService {
       type,
       userId,
     });
+    await this.voteSubjectRepository.increment(
+      { id: subjectId },
+      type === 'AGREE' ? 'voteAgreeCount' : 'voteOppositeCount',
+      1,
+    );
     return vote;
   }
 
