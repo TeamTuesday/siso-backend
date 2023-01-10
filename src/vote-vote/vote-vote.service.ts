@@ -30,4 +30,8 @@ export class VoteVoteService {
     const vote = await this.voteVoteRepository.findOne({ subjectId, userId });
     return vote ?? null;
   }
+
+  async reset() {
+    await this.voteVoteRepository.delete({});
+  }
 }
