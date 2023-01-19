@@ -13,8 +13,8 @@ import { VoteSubjectsService } from '../vote-subjects/vote-subjects.service';
 @ApiTags('투표 하기 API')
 export class VoteVoteController {
   constructor(
-    private readonly VoteVoteService: VoteVoteService,
-    private readonly VoteSubjectsService: VoteSubjectsService,
+    private readonly voteVoteService: VoteVoteService,
+    private readonly voteSubjectsService: VoteSubjectsService,
   ) {}
 
   @Post()
@@ -41,24 +41,32 @@ export class VoteVoteController {
   ) {
     const userId = 'TEST_02'; // FIXME: 임시 userId 사용
 
-    const voteSubject = await this.VoteSubjectsService.findById(subjectId);
+    const voteSubject = await this.voteSubjectsService.findById(subjectId);
     if (!voteSubject) {
       throw new NotFoundException(
         `Not found vote-subject by id "${subjectId}"`,
       );
     }
 
-    const voteVote = await this.VoteVoteService.findById(subjectId, userId);
+    const voteVote = await this.voteVoteService.findById(subjectId, userId);
     if (voteVote) {
       throw new ConflictException(
         `Already exist vote-vote by id "${subjectId}"`,
       );
     }
 
-    const vote = await this.VoteVoteService.vote(voteSubject.id, type, userId);
+    const vote = await this.voteVoteService.vote(voteSubject.id, type, userId);
 
     return {
       vote,
     };
+  }
+
+  @Post('/reset')
+  @ApiOperation({
+    summary: '투표 데이터 리셋',
+  })
+  async reset() {
+    await this.voteVoteService.reset();
   }
 }
