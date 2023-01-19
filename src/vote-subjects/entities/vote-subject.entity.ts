@@ -27,14 +27,14 @@ export class VoteSubject {
   @Column({ name: 'agree_description', nullable: false })
   agreeDescription!: string;
 
-  @Column({ name: 'opposite_description', nullable: false })
-  oppositeDescription!: string;
+  @Column({ name: 'disagree_description', nullable: false })
+  disagreeDescription!: string;
 
   @Column({ name: 'vote_agree_count', nullable: false, default: 0 })
   voteAgreeCount!: number;
 
-  @Column({ name: 'vote_opposite_count', nullable: false, default: 0 })
-  voteOppositeCount!: number;
+  @Column({ name: 'vote_disagree_count', nullable: false, default: 0 })
+  voteDisagreeCount!: number;
 
   @Column({ name: 'vote_count', nullable: false, default: 0 })
   voteCount!: number;
