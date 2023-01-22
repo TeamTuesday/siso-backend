@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { VoteVote } from './entities/vote-vote.entity';
 import { Repository } from 'typeorm';
-import { VoteSubjectsService } from 'src/vote-subjects/vote-subjects.service';
+import { VoteSubjectsService } from '../vote-subjects/vote-subjects.service';
 
 @Injectable()
 export class VoteVoteService {
