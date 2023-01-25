@@ -21,7 +21,7 @@ export class VoteSubjectsService {
   async increaseVoteCount(id: string, type: string): Promise<void> {
     await this.voteSubjectRepository.increment(
       { id },
-      type === 'AGREE' ? 'voteAgreeCount' : 'voteOppositeCount',
+      type === 'AGREE' ? 'voteAgreeCount' : 'voteDisagreeCount',
       1,
     );
     await this.voteSubjectRepository.increment({ id }, 'voteCount', 1);
