@@ -27,8 +27,14 @@ export class VoteVoteController {
         'application/json': {
           schema: {
             properties: {
-              subjectId: { type: 'string' },
-              type: { type: 'string' },
+              subjectId: {
+                type: 'string',
+                example: '{subjectId}',
+              },
+              type: {
+                example: 'AGREE',
+                oneOf: [{ type: 'AGREE' }, { type: 'DISAGREE' }],
+              },
             },
           },
         },
