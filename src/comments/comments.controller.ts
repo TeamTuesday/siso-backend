@@ -1,11 +1,23 @@
-import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  ParseUUIDPipe,
+  Post,
+} from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { VoteSubjectsService } from '../vote-subjects/vote-subjects.service';
 
 @Controller('comments')
 @ApiTags('댓글 API')
 export class CommentsController {
-  constructor(private readonly commentsService: CommentsService) {}
+  constructor(
+    private readonly commentsService: CommentsService,
+    private readonly voteSubjectsService: VoteSubjectsService,
+  ) {}
 
   @Get('/best/:id')
   @ApiOperation({
@@ -16,5 +28,30 @@ export class CommentsController {
     const comments = await this.commentsService.findBestComments(id);
 
     return { comments };
+  }
+
+  @Post()
+  async commentRegister(
+    @Body('subjectId') subjectId: string,
+    @Body('select') select: string,
+    @Body('comment') comment: string,
+  ) {
+    const userId = 'TEST_02'; // FIXME: 임시 userId 사용
+
+    const voteSubject = await this.voteSubjectsService.findById(subjectId);
+    if (!voteSubject) {
+      throw new NotFoundException(
+        `Not found vote-subject by id "${subjectId}"`,
+      );
+    }
+
+    const result = await this.commentsService.commentRegister(
+      voteSubject,
+      userId,
+      select,
+      comment,
+    );
+
+    return { result };
   }
 }

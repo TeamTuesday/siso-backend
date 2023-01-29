@@ -17,7 +17,7 @@ export class DatabaseService implements TypeOrmOptionsFactory {
       username: this.configService.database.username,
       password: this.configService.database.password,
       database: this.configService.database.name,
-      synchronize: false,
+      synchronize: true,
       entities: [VoteSubject, VoteVote, Comments],
     };
   }

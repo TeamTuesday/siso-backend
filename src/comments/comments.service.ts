@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Comments } from './entities/comments.entity';
 import { Repository } from 'typeorm';
+import { VoteSubject } from '../vote-subjects/entities/vote-subject.entity';
 
 @Injectable()
 export class CommentsService {
@@ -15,6 +16,7 @@ export class CommentsService {
       where: {
         select: 'AGREE',
         voteSubject: voteSubjectId,
+        parentId: null,
       },
       order: {
         likeCount: 'DESC',
@@ -25,6 +27,7 @@ export class CommentsService {
       where: {
         select: 'DISAGREE',
         voteSubject: voteSubjectId,
+        parentId: null,
       },
       order: {
         likeCount: 'DESC',
@@ -32,5 +35,19 @@ export class CommentsService {
     });
 
     return { commentA, commentB };
+  }
+
+  async commentRegister(
+    voteSubject: VoteSubject,
+    userId: string,
+    select: string,
+    comment: string,
+  ) {
+    return await this.repository.save({
+      voteSubject,
+      userId,
+      select,
+      comment,
+    });
   }
 }

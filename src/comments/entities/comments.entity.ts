@@ -29,11 +29,11 @@ export class Comments {
   voteSubject!: VoteSubject;
 
   // TODO User 생성시 id join
-  @Column({ nullable: false })
-  user_id!: string;
+  @Column({ name: 'user_id', nullable: false })
+  userId!: string;
 
-  @Column({ name: 'parent_id', nullable: false })
-  ParentId!: string;
+  @Column({ name: 'parent_id', nullable: true })
+  parentId!: string;
 
   @Column({ nullable: false })
   select!: string;
