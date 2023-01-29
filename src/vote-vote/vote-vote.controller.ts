@@ -37,7 +37,7 @@ export class VoteVoteController {
   })
   async voteById(
     @Body('subjectId') subjectId: string,
-    @Body('type') type: string,
+    @Body('type') type: 'AGREE' | 'OPPOSITE',
   ) {
     const userId = 'TEST_02'; // FIXME: 임시 userId 사용
 

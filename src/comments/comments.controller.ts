@@ -8,7 +8,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiExcludeEndpoint, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { VoteSubjectsService } from '../vote-subjects/vote-subjects.service';
 
 @Controller('comments')
@@ -31,6 +31,7 @@ export class CommentsController {
   }
 
   @Post()
+  @ApiExcludeEndpoint()
   async commentRegister(
     @Body('subjectId') subjectId: string,
     @Body('select') select: string,
