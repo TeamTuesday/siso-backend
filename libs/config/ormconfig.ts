@@ -1,6 +1,7 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { VoteSubject } from '../../src/vote-subjects/entities/vote-subject.entity';
 import { VoteVote } from '../../src/vote-vote/entities/vote-vote.entity';
+import { Comments } from '../../src/comments/entities/comments.entity';
 
 const config: TypeOrmModuleOptions = {
   type: 'postgres',
@@ -10,7 +11,7 @@ const config: TypeOrmModuleOptions = {
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE_NAME,
   synchronize: false,
-  entities: [VoteSubject, VoteVote],
+  entities: [VoteSubject, VoteVote, Comments],
   migrations: ['src/migration/*.ts'],
   seeds: ['libs/config/src/database/seeds/*.seed.ts'],
   cli: {
