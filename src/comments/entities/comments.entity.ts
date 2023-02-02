@@ -32,8 +32,8 @@ export class Comment {
   @Column({ name: 'user_id', nullable: false })
   userId!: string;
 
-  @Column({ name: 'parent_id', nullable: true })
-  parentId?: string | null;
+  @Column({ type: 'varchar', name: 'parent_id', nullable: true })
+  parentId!: string | null;
 
   @Column({ name: 'vote_type', nullable: false })
   voteType!: string;

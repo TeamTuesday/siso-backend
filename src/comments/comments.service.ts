@@ -14,7 +14,7 @@ export class CommentsService {
   async findBestComments(voteSubjectId: string) {
     const commentA = await this.repository.findOne({
       where: {
-        select: 'AGREE',
+        voteType: 'AGREE',
         voteSubject: voteSubjectId,
         parentId: null,
       },
@@ -25,7 +25,7 @@ export class CommentsService {
 
     const commentB = await this.repository.findOne({
       where: {
-        select: 'DISAGREE',
+        voteType: 'DISAGREE',
         voteSubject: voteSubjectId,
         parentId: null,
       },
