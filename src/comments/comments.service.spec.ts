@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CommentsService } from './comments.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Comments } from './entities/comments.entity';
+import { Comment } from './entities/comments.entity';
 
 const getMockCommentsRepository = () => {
   return {
@@ -13,16 +13,14 @@ const getMockCommentsRepository = () => {
 
 describe('CommentsService', () => {
   let service: CommentsService;
-  let commentsRepository: Partial<
-    Record<keyof Repository<Comments>, jest.Mock>
-  >;
+  let commentsRepository: Partial<Record<keyof Repository<Comment>, jest.Mock>>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CommentsService,
         {
-          provide: getRepositoryToken(Comments),
+          provide: getRepositoryToken(Comment),
           useValue: getMockCommentsRepository(),
         },
       ],
@@ -30,8 +28,8 @@ describe('CommentsService', () => {
 
     service = module.get<CommentsService>(CommentsService);
     commentsRepository = module.get<
-      Record<keyof Repository<Comments>, jest.Mock>
-    >(getRepositoryToken(Comments));
+      Record<keyof Repository<Comment>, jest.Mock>
+    >(getRepositoryToken(Comment));
   });
 
   it('should be defined', () => {

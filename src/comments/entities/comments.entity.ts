@@ -10,8 +10,8 @@ import {
 } from 'typeorm';
 import { VoteSubject } from '../../vote-subjects/entities/vote-subject.entity';
 
-@Entity('comments')
-export class Comments {
+@Entity('comment')
+export class Comment {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 

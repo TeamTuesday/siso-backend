@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Comments } from './entities/comments.entity';
+import { Comment } from './entities/comments.entity';
 import { Repository } from 'typeorm';
 import { VoteSubject } from '../vote-subjects/entities/vote-subject.entity';
 
 @Injectable()
 export class CommentsService {
   constructor(
-    @InjectRepository(Comments)
-    private repository: Repository<Comments>,
+    @InjectRepository(Comment)
+    private repository: Repository<Comment>,
   ) {}
 
   async findBestComments(voteSubjectId: string) {
