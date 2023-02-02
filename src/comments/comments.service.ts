@@ -40,13 +40,13 @@ export class CommentsService {
   async commentRegister(
     voteSubject: VoteSubject,
     userId: string,
-    select: string,
+    voteType: string,
     comment: string,
   ) {
     return await this.repository.save({
       voteSubject,
       userId,
-      select,
+      voteType,
       comment,
     });
   }

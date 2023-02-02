@@ -34,7 +34,7 @@ export class CommentsController {
   @ApiExcludeEndpoint()
   async commentRegister(
     @Body('subjectId') subjectId: string,
-    @Body('select') select: string,
+    @Body('voteType') voteType: string,
     @Body('comment') comment: string,
   ) {
     const userId = 'TEST_02'; // FIXME: 임시 userId 사용
@@ -49,7 +49,7 @@ export class CommentsController {
     const result = await this.commentsService.commentRegister(
       voteSubject,
       userId,
-      select,
+      voteType,
       comment,
     );
 
