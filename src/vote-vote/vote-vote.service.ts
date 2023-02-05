@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { VoteVote } from './entities/vote-vote.entity';
 import { Repository } from 'typeorm';
 import { VoteSubjectsService } from '../vote-subjects/vote-subjects.service';
+import { VoteType } from 'src/vote-vote/enums/vote-type';
 
 @Injectable()
 export class VoteVoteService {
@@ -14,7 +15,7 @@ export class VoteVoteService {
 
   async vote(
     subjectId: string,
-    type: string,
+    type: VoteType,
     userId: string,
   ): Promise<VoteVote | undefined> {
     const vote = await this.voteVoteRepository.save({

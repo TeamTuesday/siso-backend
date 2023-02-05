@@ -5,9 +5,10 @@ import {
   NotFoundException,
   Post,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags, getSchemaPath } from '@nestjs/swagger';
 import { VoteVoteService } from './vote-vote.service';
 import { VoteSubjectsService } from '../vote-subjects/vote-subjects.service';
+import { CreateVoteDto } from './dtos/create-vote.dto';
 
 @Controller('vote-vote')
 @ApiTags('투표 하기 API')
@@ -21,30 +22,11 @@ export class VoteVoteController {
   @ApiOperation({
     summary: '투표 하기',
     description: '특정 ID에 대한 투표 주제에 투표한다.',
-    requestBody: {
-      description: '투표하기 데이터',
-      content: {
-        'application/json': {
-          schema: {
-            properties: {
-              subjectId: {
-                type: 'string',
-                example: '{subjectId}',
-              },
-              type: {
-                example: 'AGREE',
-                oneOf: [{ type: 'AGREE' }, { type: 'DISAGREE' }],
-              },
-            },
-          },
-        },
-      },
-    },
+    requestBody: { $ref: getSchemaPath(CreateVoteDto) },
   })
-  async voteById(
-    @Body('subjectId') subjectId: string,
-    @Body('type') type: 'AGREE' | 'DISAGREE',
-  ) {
+  async voteById(@Body() createVoteDto: CreateVoteDto) {
+    console.log(createVoteDto);
+    const { subjectId, type } = createVoteDto;
     const userId = 'TEST_02'; // FIXME: 임시 userId 사용
 
     const voteSubject = await this.voteSubjectsService.findById(subjectId);
