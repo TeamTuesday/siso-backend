@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { VoteType } from '../vote-vote/enums/vote-type';
 import { Repository } from 'typeorm';
 import { VoteSubject } from './entities/vote-subject.entity';
 
@@ -18,10 +19,10 @@ export class VoteSubjectsService {
     return result ?? null;
   }
 
-  async increaseVoteCount(id: string, type: string): Promise<void> {
+  async increaseVoteCount(id: string, type: VoteType): Promise<void> {
     await this.voteSubjectRepository.increment(
       { id },
-      type === 'AGREE' ? 'voteAgreeCount' : 'voteDisagreeCount',
+      type === VoteType.AGREE ? 'voteAgreeCount' : 'voteDisagreeCount',
       1,
     );
     await this.voteSubjectRepository.increment({ id }, 'voteCount', 1);
