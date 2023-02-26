@@ -1,6 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsUUID,
+  Length,
+} from 'class-validator';
+import { VoteType } from '../../vote-vote/enums/vote-type';
 
-class CommentDto {
+export class CommentDto {
   @ApiProperty({ description: '댓글 uuid' })
   id!: string;
   @ApiProperty({ description: '댓글 생성 날짜' })
@@ -13,6 +21,7 @@ class CommentDto {
   userId!: string;
   @ApiProperty({ description: '부모 댓글 id', nullable: true })
   parentId!: string;
+  @IsEnum(VoteType)
   @ApiProperty({ description: '찬성/반대 타입' })
   voteType!: 'AGREE' | 'DISAGREE';
   @ApiProperty({ description: '댓글(300자 이내)' })
@@ -31,4 +40,26 @@ class BestCommentsResponseDto {
 export class BestCommentsSuccessDto {
   @ApiProperty({ type: BestCommentsResponseDto })
   comments?: BestCommentsResponseDto;
+}
+
+export class CreateCommentDto {
+  @IsUUID()
+  @IsNotEmpty()
+  @ApiProperty({ description: '투표 주제 uuid' })
+  readonly subjectId!: string;
+
+  @IsEnum(VoteType)
+  @IsNotEmpty()
+  @ApiProperty({ description: '찬성/반대 타입', enum: VoteType })
+  readonly voteType!: VoteType;
+
+  @IsNotEmpty()
+  @Length(1, 300)
+  @ApiProperty({ description: '댓글 내용' })
+  readonly comment!: string;
+
+  @IsUUID()
+  @IsOptional()
+  @ApiProperty({ description: '부모 댓글 id', nullable: true })
+  readonly parentId?: string;
 }

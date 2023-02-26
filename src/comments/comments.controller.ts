@@ -9,14 +9,21 @@ import {
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import {
+  ApiCreatedResponse,
   ApiExcludeEndpoint,
   ApiOperation,
   ApiParam,
   ApiResponse,
   ApiTags,
+  getSchemaPath,
 } from '@nestjs/swagger';
 import { VoteSubjectsService } from '../vote-subjects/vote-subjects.service';
-import { BestCommentsSuccessDto } from './dto/comments.dto';
+import {
+  BestCommentsSuccessDto,
+  CommentDto,
+  CreateCommentDto,
+} from './dto/comments.dto';
+import { CreateVoteDto } from '../vote-vote/dto/create-vote.dto';
 
 @Controller('comments')
 @ApiTags('댓글 API')
@@ -48,12 +55,18 @@ export class CommentsController {
   }
 
   @Post()
-  @ApiExcludeEndpoint() // endpoint 공개 안함
-  async commentRegister(
-    @Body('subjectId') subjectId: string,
-    @Body('voteType') voteType: string,
-    @Body('comment') comment: string,
-  ) {
+  @ApiOperation({
+    summary: '댓글 생성',
+    description: '주제에 대한 댓글을 생성한다.',
+    requestBody: { $ref: getSchemaPath(CreateCommentDto) },
+  })
+  @ApiCreatedResponse({
+    type: CommentDto,
+    description: 'success',
+    status: 201,
+  })
+  async commentRegister(@Body() createCommentDto: CreateCommentDto) {
+    const { subjectId, voteType, comment, parentId } = createCommentDto;
     const userId = 'TEST_02'; // FIXME: 임시 userId 사용
 
     const voteSubject = await this.voteSubjectsService.findById(subjectId);
@@ -63,13 +76,23 @@ export class CommentsController {
       );
     }
 
-    const result = await this.commentsService.commentRegister(
+    if (parentId) {
+      const comment = await this.commentsService.findById(parentId);
+      if (!comment) {
+        throw new NotFoundException(
+          `Not found parent-comment by id "${parentId}"`,
+        );
+      }
+    }
+
+    const registerResult = await this.commentsService.commentRegister(
       voteSubject,
       userId,
       voteType,
       comment,
+      parentId,
     );
 
-    return { result };
+    return { comment: registerResult };
   }
 }

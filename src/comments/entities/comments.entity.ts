@@ -38,7 +38,7 @@ export class Comment {
   @Column({ name: 'vote_type', nullable: false })
   voteType!: string;
 
-  @Column('varchar', { nullable: false, length: 200 })
+  @Column('varchar', { nullable: false, length: 300 })
   comment!: string;
 
   @Column('int', { name: 'like_count', nullable: false, default: 0 })
