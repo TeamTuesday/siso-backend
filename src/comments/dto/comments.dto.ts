@@ -15,7 +15,7 @@ class CommentDto {
   parentId!: string;
   @ApiProperty({ description: '찬성/반대 타입' })
   voteType!: 'AGREE' | 'DISAGREE';
-  @ApiProperty({ description: '댓글(200자 이내)' })
+  @ApiProperty({ description: '댓글(300자 이내)' })
   comment!: string;
   @ApiProperty({ description: '좋아요 수' })
   likeCount!: number;
