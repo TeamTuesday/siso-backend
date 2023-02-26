@@ -5,9 +5,9 @@ class CommentDto {
   id!: string;
   @ApiProperty({ description: '댓글 생성 날짜' })
   createdAt!: Date;
-  @ApiProperty({ description: '댓글 수정 날짜', nullable: true })
+  @ApiProperty({ description: '댓글 수정 날짜' })
   updateAt!: Date;
-  @ApiProperty({ description: '댓글 삭제 날짜' })
+  @ApiProperty({ description: '댓글 삭제 날짜', nullable: true })
   deleteAt?: Date;
   @ApiProperty({ description: '유저 id' })
   userId!: string;
