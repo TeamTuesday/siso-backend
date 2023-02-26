@@ -8,8 +8,15 @@ import {
   Post,
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
-import { ApiExcludeEndpoint, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiExcludeEndpoint,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { VoteSubjectsService } from '../vote-subjects/vote-subjects.service';
+import { BestCommentsSuccessDto } from './dto/comments.dto';
 
 @Controller('comments')
 @ApiTags('댓글 API')
@@ -21,8 +28,18 @@ export class CommentsController {
 
   @Get('/best/:id')
   @ApiOperation({
-    summary: '대표 의견 조회',
-    description: '주제에 대한 대표 의견(베스트 댓글)을 조회한다.',
+    summary: '베스트 댓글 조회',
+    description: '주제에 대한 베스트 댓글을 조회한다.',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: '투표 주제 uuid',
+  })
+  @ApiResponse({
+    type: BestCommentsSuccessDto,
+    description: 'success',
+    status: 200,
   })
   async findBestComments(@Param('id', new ParseUUIDPipe()) id: string) {
     const comments = await this.commentsService.findBestComments(id);
@@ -31,7 +48,7 @@ export class CommentsController {
   }
 
   @Post()
-  @ApiExcludeEndpoint()
+  @ApiExcludeEndpoint() // endpoint 공개 안함
   async commentRegister(
     @Body('subjectId') subjectId: string,
     @Body('voteType') voteType: string,
