@@ -10,7 +10,6 @@ import {
 import { CommentsService } from './comments.service';
 import {
   ApiCreatedResponse,
-  ApiExcludeEndpoint,
   ApiOperation,
   ApiParam,
   ApiResponse,
@@ -23,7 +22,6 @@ import {
   CommentDto,
   CreateCommentDto,
 } from './dto/comments.dto';
-import { CreateVoteDto } from '../vote-vote/dto/create-vote.dto';
 
 @Controller('comments')
 @ApiTags('댓글 API')
