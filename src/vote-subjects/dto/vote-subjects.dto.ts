@@ -21,4 +21,6 @@ export class VoteSubjectsDto {
   voteDisagreeCount!: number;
   @ApiProperty({ description: '전체 투표 수' })
   voteCount!: number;
+  @ApiProperty({ description: '투표 여부' })
+  hasVote!: boolean;
 }
