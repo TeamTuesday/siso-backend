@@ -8,7 +8,7 @@ import {
 import { ApiOperation, ApiTags, getSchemaPath } from '@nestjs/swagger';
 import { VoteVoteService } from './vote-vote.service';
 import { VoteSubjectsService } from '../vote-subjects/vote-subjects.service';
-import { CreateVoteDto } from './dtos/create-vote.dto';
+import { CreateVoteDto } from './dto/create-vote.dto';
 
 @Controller('vote-vote')
 @ApiTags('투표 하기 API')

@@ -11,6 +11,11 @@ export class CommentsService {
     private repository: Repository<Comment>,
   ) {}
 
+  async findById(id: string) {
+    const result = await this.repository.findOne(id);
+    return result ?? null;
+  }
+
   async findBestComments(voteSubjectId: string) {
     const commentA = await this.repository.findOne({
       where: {
@@ -38,16 +43,23 @@ export class CommentsService {
   }
 
   async commentRegister(
-    voteSubject: VoteSubject,
+    subject: VoteSubject,
     userId: string,
     voteType: string,
     comment: string,
+    parentId?: string,
   ) {
-    return await this.repository.save({
-      voteSubject,
+    const result = await this.repository.save({
+      voteSubject: subject,
       userId,
       voteType,
       comment,
+      parentId,
     });
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { voteSubject, ...commentResult } = result;
+
+    return commentResult;
   }
 }
