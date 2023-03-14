@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { VoteVote } from './entities/vote-vote.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { VoteSubjectsService } from '../vote-subjects/vote-subjects.service';
 import { VoteType } from 'src/vote-vote/enums/vote-type';
 
@@ -10,6 +10,7 @@ export class VoteVoteService {
   constructor(
     @InjectRepository(VoteVote)
     private voteVoteRepository: Repository<VoteVote>,
+    @Inject(forwardRef(() => VoteSubjectsService))
     private voteSubjectService: VoteSubjectsService,
   ) {}
 
@@ -32,7 +33,25 @@ export class VoteVoteService {
     return vote ?? null;
   }
 
+  async findBySubjectsAndUser(params: ExistsParams): Promise<VoteVote[]> {
+    const { subjects, user } = params;
+
+    const votes = await this.voteVoteRepository.find({
+      where: {
+        subjectId: In(subjects.map(({ id }) => id)),
+        userId: user.id,
+      },
+    });
+
+    return votes;
+  }
+
   async reset() {
     await this.voteVoteRepository.delete({});
   }
 }
+
+type ExistsParams = {
+  subjects: { id: string }[];
+  user: { id: string };
+};
