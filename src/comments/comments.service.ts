@@ -3,6 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Comment } from './entities/comments.entity';
 import { Repository } from 'typeorm';
 import { VoteSubject } from '../vote-subjects/entities/vote-subject.entity';
+import {
+  paginate,
+  Pagination,
+  IPaginationOptions,
+} from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class CommentsService {
@@ -42,8 +47,11 @@ export class CommentsService {
     return { commentA, commentB };
   }
 
-  async getComments(voteSubjectId: string) {
-    const comments = await this.repository.find({
+  async getComments(
+    voteSubjectId: string,
+    options: IPaginationOptions,
+  ): Promise<Pagination<Comment>> {
+    return paginate<Comment>(this.repository, options, {
       where: {
         voteSubject: voteSubjectId,
         parentId: null,
@@ -52,12 +60,14 @@ export class CommentsService {
         createdAt: 'DESC',
       },
     });
-
-    return comments;
   }
 
-  async getChildComments(voteSubjectId: string, parentId: string) {
-    const comments = await this.repository.find({
+  async getChildComments(
+    voteSubjectId: string,
+    parentId: string,
+    options: IPaginationOptions,
+  ): Promise<Pagination<Comment>> {
+    return paginate<Comment>(this.repository, options, {
       where: {
         voteSubject: voteSubjectId,
         parentId,
@@ -66,8 +76,6 @@ export class CommentsService {
         createdAt: 'DESC',
       },
     });
-
-    return comments;
   }
 
   async commentRegister(

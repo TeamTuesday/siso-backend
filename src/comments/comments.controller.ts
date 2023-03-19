@@ -1,17 +1,21 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Get,
   NotFoundException,
   Param,
+  ParseIntPipe,
   ParseUUIDPipe,
   Post,
+  Query,
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import {
   ApiCreatedResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
   getSchemaPath,
@@ -20,8 +24,11 @@ import { VoteSubjectsService } from '../vote-subjects/vote-subjects.service';
 import {
   BestCommentsSuccessDto,
   CommentDto,
+  CommentsSuccessDto,
   CreateCommentDto,
 } from './dto/comments.dto';
+import { Pagination } from 'nestjs-typeorm-paginate';
+import { Comment } from './entities/comments.entity';
 
 @Controller('comments')
 @ApiTags('댓글 API')
@@ -64,14 +71,28 @@ export class CommentsController {
     required: true,
     description: '투표 주제 uuid',
   })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: '요청 페이지 default = 1',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: '요청 카운트 default = 10',
+  })
   @ApiResponse({
-    type: [CommentDto],
+    type: CommentsSuccessDto,
     description: 'success',
     status: 200,
   })
   async getComments(
     @Param('voteSubjectId', new ParseUUIDPipe()) voteSubjectId: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
   ) {
+    limit = limit > 100 ? 100 : limit;
+
     const voteSubject = await this.voteSubjectsService.findById(voteSubjectId);
     if (!voteSubject) {
       throw new NotFoundException(
@@ -79,9 +100,10 @@ export class CommentsController {
       );
     }
 
-    const comments = await this.commentsService.getComments(voteSubjectId);
-
-    return { comments };
+    return await this.commentsService.getComments(voteSubjectId, {
+      page,
+      limit,
+    });
   }
 
   @Get('/:voteSubjectId/:parentId')
@@ -99,15 +121,29 @@ export class CommentsController {
     required: true,
     description: '댓글 uuid',
   })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: '요청 페이지 default = 1',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: '요청 카운트 default = 10',
+  })
   @ApiResponse({
-    type: [CommentDto],
+    type: CommentsSuccessDto,
     description: 'success',
     status: 200,
   })
   async getChildComments(
     @Param('voteSubjectId', new ParseUUIDPipe()) voteSubjectId: string,
     @Param('parentId', new ParseUUIDPipe()) parentId: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
   ) {
+    limit = limit > 100 ? 100 : limit;
+
     const voteSubject = await this.voteSubjectsService.findById(voteSubjectId);
     if (!voteSubject) {
       throw new NotFoundException(
@@ -124,12 +160,14 @@ export class CommentsController {
       }
     }
 
-    const comments = await this.commentsService.getChildComments(
+    return await this.commentsService.getChildComments(
       voteSubjectId,
       parentId,
+      {
+        page,
+        limit,
+      },
     );
-
-    return { comments };
   }
 
   @Post()

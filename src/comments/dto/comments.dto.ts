@@ -7,6 +7,7 @@ import {
   Length,
 } from 'class-validator';
 import { VoteType } from '../../vote-vote/enums/vote-type';
+import { PaginationDto } from '../../utils/dto/pagination.dto';
 
 export class CommentDto {
   @ApiProperty({ description: '댓글 uuid' })
@@ -40,6 +41,14 @@ class BestCommentsResponseDto {
 export class BestCommentsSuccessDto {
   @ApiProperty({ type: BestCommentsResponseDto })
   comments?: BestCommentsResponseDto;
+}
+
+export class CommentsSuccessDto {
+  @ApiProperty({ description: '댓글 목록', type: [CommentDto] })
+  items!: [CommentDto];
+
+  @ApiProperty()
+  meta!: PaginationDto;
 }
 
 export class CreateCommentDto {
