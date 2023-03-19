@@ -42,6 +42,34 @@ export class CommentsService {
     return { commentA, commentB };
   }
 
+  async getComments(voteSubjectId: string) {
+    const comments = await this.repository.find({
+      where: {
+        voteSubject: voteSubjectId,
+        parentId: null,
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+
+    return comments;
+  }
+
+  async getChildComments(voteSubjectId: string, parentId: string) {
+    const comments = await this.repository.find({
+      where: {
+        voteSubject: voteSubjectId,
+        parentId,
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+
+    return comments;
+  }
+
   async commentRegister(
     subject: VoteSubject,
     userId: string,

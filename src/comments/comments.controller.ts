@@ -31,13 +31,13 @@ export class CommentsController {
     private readonly voteSubjectsService: VoteSubjectsService,
   ) {}
 
-  @Get('/best/:id')
+  @Get('/best/:voteSubjectId')
   @ApiOperation({
     summary: '베스트 댓글 조회',
     description: '주제에 대한 베스트 댓글을 조회한다.',
   })
   @ApiParam({
-    name: 'id',
+    name: 'voteSubjectId',
     required: true,
     description: '투표 주제 uuid',
   })
@@ -46,8 +46,88 @@ export class CommentsController {
     description: 'success',
     status: 200,
   })
-  async findBestComments(@Param('id', new ParseUUIDPipe()) id: string) {
-    const comments = await this.commentsService.findBestComments(id);
+  async findBestComments(
+    @Param('voteSubjectId', new ParseUUIDPipe()) voteSubjectId: string,
+  ) {
+    const comments = await this.commentsService.findBestComments(voteSubjectId);
+
+    return { comments };
+  }
+
+  @Get('/:voteSubjectId')
+  @ApiOperation({
+    summary: '댓글 조회',
+    description: '주제에 대한 댓글을 조회한다.',
+  })
+  @ApiParam({
+    name: 'voteSubjectId',
+    required: true,
+    description: '투표 주제 uuid',
+  })
+  @ApiResponse({
+    type: [CommentDto],
+    description: 'success',
+    status: 200,
+  })
+  async getComments(
+    @Param('voteSubjectId', new ParseUUIDPipe()) voteSubjectId: string,
+  ) {
+    const voteSubject = await this.voteSubjectsService.findById(voteSubjectId);
+    if (!voteSubject) {
+      throw new NotFoundException(
+        `Not found vote-subject by id "${voteSubjectId}"`,
+      );
+    }
+
+    const comments = await this.commentsService.getComments(voteSubjectId);
+
+    return { comments };
+  }
+
+  @Get('/:voteSubjectId/:parentId')
+  @ApiOperation({
+    summary: '대댓글 조회',
+    description: '대댓글을 조회한다.',
+  })
+  @ApiParam({
+    name: 'voteSubjectId',
+    required: true,
+    description: '투표 주제 uuid',
+  })
+  @ApiParam({
+    name: 'parentId',
+    required: true,
+    description: '댓글 uuid',
+  })
+  @ApiResponse({
+    type: [CommentDto],
+    description: 'success',
+    status: 200,
+  })
+  async getChildComments(
+    @Param('voteSubjectId', new ParseUUIDPipe()) voteSubjectId: string,
+    @Param('parentId', new ParseUUIDPipe()) parentId: string,
+  ) {
+    const voteSubject = await this.voteSubjectsService.findById(voteSubjectId);
+    if (!voteSubject) {
+      throw new NotFoundException(
+        `Not found vote-subject by id "${voteSubjectId}"`,
+      );
+    }
+
+    if (parentId) {
+      const comment = await this.commentsService.findById(parentId);
+      if (!comment) {
+        throw new NotFoundException(
+          `Not found parent-comment by id "${parentId}"`,
+        );
+      }
+    }
+
+    const comments = await this.commentsService.getChildComments(
+      voteSubjectId,
+      parentId,
+    );
 
     return { comments };
   }
