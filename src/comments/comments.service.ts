@@ -16,8 +16,8 @@ export class CommentsService {
     private repository: Repository<Comment>,
   ) {}
 
-  async findById(id: string) {
-    const result = await this.repository.findOne(id);
+  async findById(id: string, withDeleted = false) {
+    const result = await this.repository.findOne(id, { withDeleted });
     return result ?? null;
   }
 
@@ -105,5 +105,11 @@ export class CommentsService {
     });
 
     return this.findById(id);
+  }
+
+  async deleteComment(id: string) {
+    await this.repository.softDelete(id);
+
+    return this.findById(id, true);
   }
 }

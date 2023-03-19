@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   DefaultValuePipe,
+  Delete,
   Get,
   NotFoundException,
   Param,
@@ -223,7 +224,7 @@ export class CommentsController {
     description: 'success',
     status: 200,
   })
-  async updateCommentById(@Body() updateCommentDto: UpdateCommentDto) {
+  async updateComment(@Body() updateCommentDto: UpdateCommentDto) {
     const { id } = updateCommentDto;
     const userId = 'TEST_02'; // FIXME: 임시 userId 사용
     // TODO 수정 가능/불가능 유저 확인
@@ -237,6 +238,32 @@ export class CommentsController {
       id,
       updateCommentDto.comment,
     );
+
+    return { comment: result };
+  }
+
+  @Delete('/:id')
+  @ApiOperation({
+    summary: '댓글 삭제',
+    description: '댓글을 삭제한다.',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: '댓글 uuid',
+  })
+  @ApiResponse({
+    type: CommentDto,
+    description: 'success',
+    status: 200,
+  })
+  async deleteComment(@Param('id', new ParseUUIDPipe()) id: string) {
+    const comment = await this.commentsService.findById(id);
+    if (!comment) {
+      throw new NotFoundException(`Not found comment by id "${id}"`);
+    }
+
+    const result = await this.commentsService.deleteComment(id);
 
     return { comment: result };
   }
