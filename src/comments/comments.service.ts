@@ -62,7 +62,7 @@ export class CommentsService {
     });
   }
 
-  async getChildComments(
+  async findChildComments(
     voteSubjectId: string,
     parentId: string,
     options: IPaginationOptions,
@@ -78,7 +78,7 @@ export class CommentsService {
     });
   }
 
-  async commentRegister(
+  async createComment(
     subject: VoteSubject,
     userId: string,
     voteType: string,
@@ -97,5 +97,13 @@ export class CommentsService {
     const { voteSubject, ...commentResult } = result;
 
     return commentResult;
+  }
+
+  async updateComment(id: string, comment: string) {
+    await this.repository.update(id, {
+      comment,
+    });
+
+    return this.findById(id);
   }
 }

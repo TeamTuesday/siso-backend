@@ -7,6 +7,7 @@ import {
   Param,
   ParseIntPipe,
   ParseUUIDPipe,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
@@ -26,9 +27,8 @@ import {
   CommentDto,
   CommentsSuccessDto,
   CreateCommentDto,
+  UpdateCommentDto,
 } from './dto/comments.dto';
-import { Pagination } from 'nestjs-typeorm-paginate';
-import { Comment } from './entities/comments.entity';
 
 @Controller('comments')
 @ApiTags('댓글 API')
@@ -86,7 +86,7 @@ export class CommentsController {
     description: 'success',
     status: 200,
   })
-  async getComments(
+  async findComments(
     @Param('voteSubjectId', new ParseUUIDPipe()) voteSubjectId: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
@@ -136,7 +136,7 @@ export class CommentsController {
     description: 'success',
     status: 200,
   })
-  async getChildComments(
+  async findChildComments(
     @Param('voteSubjectId', new ParseUUIDPipe()) voteSubjectId: string,
     @Param('parentId', new ParseUUIDPipe()) parentId: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
@@ -160,7 +160,7 @@ export class CommentsController {
       }
     }
 
-    return await this.commentsService.getChildComments(
+    return await this.commentsService.findChildComments(
       voteSubjectId,
       parentId,
       {
@@ -181,7 +181,7 @@ export class CommentsController {
     description: 'success',
     status: 201,
   })
-  async commentRegister(@Body() createCommentDto: CreateCommentDto) {
+  async createComment(@Body() createCommentDto: CreateCommentDto) {
     const { subjectId, voteType, comment, parentId } = createCommentDto;
     const userId = 'TEST_02'; // FIXME: 임시 userId 사용
 
@@ -201,7 +201,7 @@ export class CommentsController {
       }
     }
 
-    const registerResult = await this.commentsService.commentRegister(
+    const registerResult = await this.commentsService.createComment(
       voteSubject,
       userId,
       voteType,
@@ -210,5 +210,34 @@ export class CommentsController {
     );
 
     return { comment: registerResult };
+  }
+
+  @Patch()
+  @ApiOperation({
+    summary: '댓글 수정',
+    description: '댓글을 수정한다.',
+    requestBody: { $ref: getSchemaPath(UpdateCommentDto) },
+  })
+  @ApiResponse({
+    type: CommentDto,
+    description: 'success',
+    status: 200,
+  })
+  async updateCommentById(@Body() updateCommentDto: UpdateCommentDto) {
+    const { id } = updateCommentDto;
+    const userId = 'TEST_02'; // FIXME: 임시 userId 사용
+    // TODO 수정 가능/불가능 유저 확인
+
+    const comment = await this.commentsService.findById(id);
+    if (!comment) {
+      throw new NotFoundException(`Not found comment by id "${id}"`);
+    }
+
+    const result = await this.commentsService.updateComment(
+      id,
+      updateCommentDto.comment,
+    );
+
+    return { comment: result };
   }
 }

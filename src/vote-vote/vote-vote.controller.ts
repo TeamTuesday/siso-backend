@@ -25,7 +25,6 @@ export class VoteVoteController {
     requestBody: { $ref: getSchemaPath(CreateVoteDto) },
   })
   async voteById(@Body() createVoteDto: CreateVoteDto) {
-    console.log(createVoteDto);
     const { subjectId, type } = createVoteDto;
     const userId = 'TEST_02'; // FIXME: 임시 userId 사용
 

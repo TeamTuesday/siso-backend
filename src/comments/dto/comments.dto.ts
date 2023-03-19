@@ -72,3 +72,15 @@ export class CreateCommentDto {
   @ApiProperty({ description: '부모 댓글 id', nullable: true })
   readonly parentId?: string;
 }
+
+export class UpdateCommentDto {
+  @IsUUID()
+  @IsOptional()
+  @ApiProperty({ description: '댓글 id' })
+  readonly id!: string;
+
+  @IsNotEmpty()
+  @Length(1, 300)
+  @ApiProperty({ description: '댓글 내용' })
+  readonly comment!: string;
+}
