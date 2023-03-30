@@ -3,6 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Comment } from './entities/comments.entity';
 import { Repository } from 'typeorm';
 import { VoteSubject } from '../vote-subjects/entities/vote-subject.entity';
+import {
+  paginate,
+  Pagination,
+  IPaginationOptions,
+} from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class CommentsService {
@@ -11,8 +16,8 @@ export class CommentsService {
     private repository: Repository<Comment>,
   ) {}
 
-  async findById(id: string) {
-    const result = await this.repository.findOne(id);
+  async findById(id: string, withDeleted = false) {
+    const result = await this.repository.findOne(id, { withDeleted });
     return result ?? null;
   }
 
@@ -42,7 +47,38 @@ export class CommentsService {
     return { commentA, commentB };
   }
 
-  async commentRegister(
+  async getComments(
+    voteSubjectId: string,
+    options: IPaginationOptions,
+  ): Promise<Pagination<Comment>> {
+    return paginate<Comment>(this.repository, options, {
+      where: {
+        voteSubject: voteSubjectId,
+        parentId: null,
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+  }
+
+  async findChildComments(
+    voteSubjectId: string,
+    parentId: string,
+    options: IPaginationOptions,
+  ): Promise<Pagination<Comment>> {
+    return paginate<Comment>(this.repository, options, {
+      where: {
+        voteSubject: voteSubjectId,
+        parentId,
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+  }
+
+  async createComment(
     subject: VoteSubject,
     userId: string,
     voteType: string,
@@ -61,5 +97,19 @@ export class CommentsService {
     const { voteSubject, ...commentResult } = result;
 
     return commentResult;
+  }
+
+  async updateComment(id: string, comment: string) {
+    await this.repository.update(id, {
+      comment,
+    });
+
+    return this.findById(id);
+  }
+
+  async deleteComment(id: string) {
+    await this.repository.softDelete(id);
+
+    return this.findById(id, true);
   }
 }
